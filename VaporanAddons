@@ -1,0 +1,35 @@
+options:
+	permissions: vaporan.permissions
+	permissions_pmessage: &cYou do not have permission to use this command !
+
+on join:
+	set {vaporan.ip.%player%} to player's ip
+	set {vaporan.uuid.%player%} to player's uuid
+
+
+on join:
+	if {vaporan.uuid.%player%} is "null":
+		stop 
+	if {vaporan.uuid.%player%} is not "null":
+		set {_uuid} to player's uuid
+		if {vaporan.uuid.%player%} is not {_uuid}:
+			kick the player due to "&7You just can't uuid spoof like that man"
+		else:
+			stop 
+
+every hour:
+	loop all players:
+		if loop-player is op:
+			clear {perms.check}
+			add "%loop-player%" to {perms.check}
+			stop 
+		if loop-player has permission "*":
+			add "%loop-player%" to {perms.check}
+			stop 
+
+
+command /permissions [<text>]:
+	permission: {@permissions}
+	permission message: {@permissions_pmessage}
+	trigger:
+		send "&7OPPED players or with permission * %{perms.check}%"
