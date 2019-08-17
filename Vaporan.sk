@@ -1,0 +1,122 @@
+variables:
+	{vaporan.ip.%player%} = "null"
+	{vaporan.uuid.%player%} = "null"
+	{vaporan.reason.%player%} = "null"
+	{vaporan.banned.%player%} = "0"
+	{vaporan.bannedon.%player%} = "none"
+	{vaporan.isbanned.%player%} = "false" 
+
+
+options:
+	prefix: &f&lVaporan &8»
+
+	ban: vaporan.ban
+	ban_pmessage: &cYou do not have permission to use this command !
+	ban_notset: &cInvalid syntax, Missing arguments.
+	ban_prefix: &8(&4&l!&8)
+
+	ban_line1: &8(&4&l!&8) &7You have been &4&lBanned &8(&4&l!&8)
+	ban_line2: &7
+	ban_line3: &7Banned on: &6%{vaporan.bannedon.%arg 1%}%
+	ban_line4: &7Banned by: &6%sender%
+	ban_line5: &7Reason: &6%{vaporan.reason.%player%}%
+	ban_line6: &7
+	ban_line7: &7If the ban is unfair, please appeal on discord
+	ban_line8: &9&ldiscord.vapornetwork.xyz
+	ban_line9: &7
+
+	check: vaporan.check
+	check_pmessage: &cYou do not have permission to use this command !
+	check_notset: &cInvalid syntax, Missing arguments.
+	check_prefix: &8»
+
+	check_notbanned: &cError, that user is not banned &o!
+	check_lines: &8&m-------<&r &9%arg 1% &8&m>-------&r
+
+	check_username: &cUsername &8» &7%arg 1%
+	check_uuid: &cUUID &8» %{vaporan.uuid.%arg 1%}%
+	check_lastip: &cLast IP &8» %{vaporan.ip.%arg 1%}% 
+	check_reason: &cReason &8» %{vaporan.reason.%arg 1%}%
+
+	unban: vaporan.unban
+	unban_pmessage: &cYou do not have permission to use this command !
+	unban_notset: &cInvalid syntax, Missing arguments.
+	unban_prefix: &8(&4&l!&8)
+
+command /ban [<offline player>] [<text>]:
+	permission: {@ban}
+	permission message: {ban_pmessage}
+	trigger:
+		if arg 1 is not set:
+			send "{@prefix} {@ban_notset}"
+		if arg 1 is set:
+			if arg 2 is not set:
+				set {vaporan.reason.%arg 1%} to "Perma banned" 
+				add 1 to {vaporan.banned.%arg 1%}
+				set {vaporan.isbanned.%arg 1%} to "true"
+				
+				set {_bannedon} to "%now%"
+				replace all "/" in {_bannedon} with "."
+				replace all "." in {_bannedon} with ":"
+				set {_bannedon} to {vaporan.bannedon.%arg 1%} 
+
+				send "{@prefix} &aYou banned %arg 1% from the server &o!"
+				broadcast "{@ban_prefix} &7%sender% perm banned %arg 1%"
+				ban arg 1 due to "{@ban_line1} %nl% {@ban_line2} %nl% {@ban_line3} %nl% {@ban_line4} %nl% {@ban_line5} %nl% {@ban_line6} %nl% {@ban_line7} %nl% {@ban_line8} %nl% {@ban_line9} %nl%"
+		
+		if arg 1 is set:
+			if arg 2 is set:
+				set {vaporan.reason.%arg 1%} to "%arg 2%"
+				add 1 to {vaporan.banned.%arg 1%}
+				set {vaporan.isbanned.%arg 1%} to "true"
+
+				set {_bannedon} to "%now%"
+				replace all "/" in {_bannedon} with "."
+				replace all "." in {_bannedon} with ":"
+				set {_bannedon} to {vaporan.bannedon.%arg 1%} 
+
+				send "{@prefix} &aYou banned %arg 1% from the server &o!"
+				broadcast "{@ban_prefix} &7%sender% perm banned %arg 1%  for %arg 2%"
+				ban arg 1 due to "{@ban_line1} %nl% {@ban_line2} %nl% {@ban_line3} %nl% {@ban_line4} %nl% {@ban_line5} %nl% {@ban_line6} %nl% {@ban_line7} %nl% {@ban_line8} %nl% {@ban_line9} %nl%"
+
+command /check [<offline player>]:
+	permission: {@check}
+	permission message: {@check_pmessage}
+	trigger:
+		if arg 1 is not set:
+			send "{@check_prefix} {@check_notset}"
+		if arg 1 is set:
+			if {vaporan.isbanned.%arg 1%} is "false":
+				send "{@check_prefix} {@check_notbanned}"
+		if arg 1 is set:
+			if {vaporan.isbanned.%arg 1%} is "true":
+				send "{@check_lines}"
+				send "{@check_username}"
+				send "{@check_uuid}"
+				send "{@check_lastip}"
+				send "{@check_reason}"
+				send "{@check_lines}"
+
+
+command /unban [<offline player>] [<text>]:
+	permission: {@unban}
+	permission message: {@unban_pmessage}
+	trigger:
+		if arg 1 is not set:
+			send "{@unban_notset}"
+		if arg 1 is set:
+			if arg 2 is not set:
+				send "{@unban_prefix} &7You unbanned %arg 1%"
+				broadcast "{unban_prefix} &c%arg 1% &7has been unban by &a%sender%"
+				unban arg 1
+		if arg 1 is set:
+			if arg 2 is set:
+				if arg 2 is not "-s":
+					send "{@unban_prefix} &7You unbanned %arg 1%"
+					broadcast "{unban_prefix} &c%arg 1% &7has been unban by &a%sender%"
+					unban arg 1
+		if arg 1 is set:
+			if arg 2 is set:
+				if arg 2 is "-s":
+					send "{@unban_prefix} &7You unbanned %arg 1%"
+					unban arg 1
