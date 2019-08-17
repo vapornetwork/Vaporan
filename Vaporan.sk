@@ -6,7 +6,6 @@ variables:
 	{vaporan.bannedon.%player%} = "none"
 	{vaporan.isbanned.%player%} = "false" 
 
-
 options:
 	prefix: &f&lVaporan &8»
 
@@ -106,17 +105,20 @@ command /unban [<offline player>] [<text>]:
 			send "{@unban_notset}"
 		if arg 1 is set:
 			if arg 2 is not set:
+				set {vaporan.isbanned.%arg 1%} to "false"
 				send "{@unban_prefix} &7You unbanned %arg 1%"
 				broadcast "{unban_prefix} &c%arg 1% &7has been unban by &a%sender%"
 				unban arg 1
 		if arg 1 is set:
 			if arg 2 is set:
 				if arg 2 is not "-s":
+					set {vaporan.isbanned.%arg 1%} to "false"
 					send "{@unban_prefix} &7You unbanned %arg 1%"
 					broadcast "{unban_prefix} &c%arg 1% &7has been unban by &a%sender%"
 					unban arg 1
 		if arg 1 is set:
 			if arg 2 is set:
 				if arg 2 is "-s":
+					set {vaporan.isbanned.%arg 1%} to "false"
 					send "{@unban_prefix} &7You unbanned %arg 1%"
 					unban arg 1
